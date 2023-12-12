@@ -16,6 +16,7 @@ WEEKLY_RENTAL_FEE = float(f.readline().strip())
 HST_RATE = float(f.readline().strip())
 
 f.close()
+# eb test
 
 
 # Setting up program functions
