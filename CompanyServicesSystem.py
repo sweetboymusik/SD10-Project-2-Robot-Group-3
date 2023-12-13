@@ -4,25 +4,26 @@
 
 # Import any required libraries
 import datetime
+import os
 
 # Setting up program constants
 f = open("Defaults.dat", "r")
-
 NEXT_TRANS_NUM = int(f.readline().strip())
 NEXT_DRIVER_NUM = int(f.readline().strip())
 MONTHLY_STAND_FEE = float(f.readline().strip())
 DAILY_RENTAL_FEE = float(f.readline().strip())
 WEEKLY_RENTAL_FEE = float(f.readline().strip())
 HST_RATE = float(f.readline().strip())
-
 f.close()
-# eb test
 
 
 # Setting up program functions
-def add_employee():
+def add_employee(name):
+    clear_console()
 
     while True:
+        print(name)
+
         driver_number = NEXT_DRIVER_NUM
 
         while True:
@@ -185,18 +186,24 @@ def add_employee():
         f.close()
 
         another = input("Enter another employee? (Y/N): ").upper()
+        clear_console
 
         if another == "N":
+            clear_console
             break
 
 
-def gen_report():
+def gen_report(name):
+    clear_console()
+
+    print(name)
     print()
+
     print("HAB TAXI SERVICES")
     print("EMPLOYEE LISTING")
     print()
-    print(f"DRIVER  NAME               ADDRESS          PHONE          LICENSE / EXPIRY     POLICY / NUMBER     OWN CAR BALANCE      ")
-    print()
+    print(f"DRIVER  NAME               ADDRESS          PHONE NUMBER   LICENSE / EXPIRY     POLICY / NUMBER   OWN CAR   BALANCE")
+    print("-"*115)
     f = open("Employees.dat", "r")
 
     emp_cnt = 0
@@ -223,17 +230,37 @@ def gen_report():
         emp_cnt += 1
         bal_acm += balance_due
 
-        print(f"{driver_number}    {name:<18s} {address_display:<16s} {phone_number}   {drivers_license} / {license_expiry}   {policy_company:<8s} / {policy_number}   {own_car}   {balance_display:>9s}")
+        print(f"{driver_number}    {name:<18s} {address_display:<16s} {phone_number}   {drivers_license} / {license_expiry}   {policy_company:<8s} / {policy_number}    {own_car}    {balance_display:>9s}")
 
     bal_acm_display = f"${bal_acm:,.2f}"
 
-    print(f"                                                                                      ============================")
+    print("-"*115)
     print(
-        f"NUMBER OF EMPLOYEES: {emp_cnt:02d}                                                               TOTAL BALANCE DUE: {bal_acm_display:>9s}")
+        f"NUMBER OF EMPLOYEES: {emp_cnt:02d}                                                                TOTAL BALANCE DUE: {bal_acm_display:>9s}")
+    print(" "*106 + "=========")
+    print()
+    input("Press enter to return to the main menu...")
+    clear_console()
+
+
+def todo(name):
+    clear_console()
+    print(name)
+    print()
+    input("This option has not yet been implemented. Press enter to return to the main menu...")
+    clear_console()
+
+
+def clear_console():
+    if os.name == "nt":
+        os.system("cls")
+    elif os.name == "posix":
+        os.system("clear")
 
 
 # Start of the main program.
 while True:
+    clear_console()
 
     print(f"HAB Taxi Services")
     print(f"Company Services System")
@@ -245,36 +272,35 @@ while True:
     print(f"5. Record Employee Payment.")
     print(f"6. Print Company Profit Listing.")
     print(f"7. Print Driver Financial Listing.")
-    print(f"8. REPORT.")     # to be determined
+    print(f"8. Print Employee Listing.")
     print(f"9. Quit Program.")
     print()
 
     try:
-        choice = int(input("Enter Choice 1-9: "))
+        choice = int(input("Enter choice (1-9): "))
     except:
         print("Invalid selection - must choose an option between 1-9. Please re-enter.")
     else:
         if choice <= 9 and choice >= 1:
-            print("valid input.")
             if choice == 1:
-                add_employee()
+                add_employee("1. Enter New Employee (driver)")
                 NEXT_DRIVER_NUM += 1
             if choice == 2:
-                print("Choice 2.")
+                todo("2. Enter Company Revenues")
             if choice == 3:
-                print("Choice 3.")
+                todo("3. Enter Company Expenses")
             if choice == 4:
-                print("Choice 4.")
+                todo("4. Track Car Rentals")
             if choice == 5:
-                print("Choice 5.")
+                todo("5. Record Employee Payment")
             if choice == 6:
-                print("Choice 6.")
+                todo("6. Print Company Profit Listing")
             if choice == 7:
-                print("Choice 7.")
+                todo("7. Print Driver Financial Listing")
             if choice == 8:
-                gen_report()
+                gen_report("8. Print Employee Listing")
             if choice == 9:
-                print("Choice 9.")
+                print("Thank you for using our program. Have a great day!")
                 break
         else:
             print(
