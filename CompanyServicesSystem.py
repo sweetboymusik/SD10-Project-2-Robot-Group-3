@@ -208,7 +208,6 @@ def add_employee(name):
 
 def gen_employee_listing(name):
     clear_console()
-
     print(name)
     print()
 
@@ -256,12 +255,127 @@ def gen_employee_listing(name):
     clear_console()
 
 
+def gen_driver_fin_listing(name):
+    clear_console()
+    print(name)
+    print()
+
+    emp_arr = []
+
+    f = open("Employees.dat", "r")
+    for line in f:
+        line_split = line.split(", ")
+        emp_arr.append(line_split[2].strip())
+    f.close()
+
+    while True:
+        print()
+        driver_num = input("Enter driver number (####): ")
+
+        if len(driver_num) != 4:
+            print()
+            print("MUST BE A VALID 4-DIGIT NUMBER. PLEASE RE-ENTER.")
+            print()
+        elif driver_num not in emp_arr:
+            print()
+            print("NOT A VALID DRIVER NUMBER. PLEASE RE-ENTER.")
+            print()
+        else:
+            print(driver_num)
+            break
+
+    while True:
+        try:
+            print()
+            start_date = input(
+                "Enter start date (YYYY-MM-DD): ")
+            datetime.datetime.strptime(start_date, "%Y-%m-%d")
+        except:
+            print()
+            print(
+                "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+        else:
+            if datetime.datetime.strptime(start_date, "%Y-%m-%d").date() <= datetime.datetime.now().date():
+                break
+            else:
+                print()
+                print(
+                    "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+
+    while True:
+        try:
+            print()
+            end_date = input(
+                "Enter end date (YYYY-MM-DD): ")
+            datetime.datetime.strptime(end_date, "%Y-%m-%d")
+        except:
+            print()
+            print(
+                "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+        else:
+            if (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date()) and (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() <= datetime.datetime.now().date()):
+                break
+            else:
+                print()
+                print(
+                    "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR EARLIER THAN START DATE, OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+
+    print()
+    print()
+    print("HAB TAXI SERVICES")
+    print("DRIVER FINANCIAL LISTING")
+    print()
+    print(f"DRIVER NUMBER: {driver_num}")
+    print(f"START DATE:    {start_date}")
+    print(f"END DATE:      {end_date}")
+    print()
+    print("=" * 65)
+    print()
+    print(" ID        DATE         DESC.       AMOUNT       HST       TOTAL")
+    print("-" * 65)
+
+    f = open("Revenues.dat", "r")
+    trans_cnt = 0
+    amt_acm = 0
+    tax_acm = 0
+    total_acm = 0
+
+    for line in f:
+        line_split = line.split(", ")
+
+        if line_split[1].strip() != driver_num:
+            continue
+
+        trans_id = line_split[0].strip()
+        trans_date = line_split[2].strip()
+        desc = line_split[3].strip()
+        amount = float(line_split[4].strip())
+        taxes = float(line_split[5].strip())
+        total = float(line_split[6].strip())
+
+        if datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date() and datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() <= datetime.datetime.strptime(end_date, "%Y-%m-%d").date():
+            print(
+                f" {trans_id:3s}    {trans_date:10s}   {desc:13s}{format_dollars(amount)}  {format_dollars(taxes)}  {format_dollars(total)}")
+
+            trans_cnt += 1
+            amt_acm += amount
+            tax_acm += taxes
+            total_acm += total
+
+    print(" " * 34 + "-" * 31)
+    print(
+        f"TOTAL TRANSACTIONS: {trans_cnt:03d}   TOTALS: {format_dollars(amt_acm)}  {format_dollars(tax_acm)}  {format_dollars(total_acm)}")
+    print(" " * 34 + "=" * 31)
+
+    input("...")
+
+
 def add_revenue(emp, amt):
     global NEXT_TRANS_NUM
 
     entry_arr = []
 
-    f = open("Revenue.dat", "a")
+    f = open("Revenues.dat", "a")
 
     entry_arr.append(f"{NEXT_TRANS_NUM}")
     entry_arr.append(emp[2])
@@ -274,6 +388,13 @@ def add_revenue(emp, amt):
     f.write(f"{', '.join(entry_arr)}\n")
 
     NEXT_TRANS_NUM += 1
+
+
+def format_dollars(amt):
+    fmt1 = f"${amt:,.2f}"
+    fmt2 = f"{fmt1:>9s}"
+
+    return fmt2
 
 
 def todo(name):
@@ -307,12 +428,12 @@ def update_bal_revenue():
                 continue
 
             bal_due = float(line_split[len(line_split) - 1].strip())
-            bal_due += MONTHLY_STAND_FEE
+            bal_due += MONTHLY_STAND_FEE + (MONTHLY_STAND_FEE * HST_RATE)
 
             line_split[len(line_split) - 1] = f"{bal_due}"
             emp_arr.append(line_split)
 
-            add_revenue(line_split, bal_due)
+            add_revenue(line_split, MONTHLY_STAND_FEE)
 
         f.close()
 
@@ -363,7 +484,7 @@ while True:
             if choice == 6:
                 todo("6. Print Company Profit Listing")
             if choice == 7:
-                todo("7. Print Driver Financial Listing")
+                gen_driver_fin_listing("7. Print Driver Financial Listing")
             if choice == 8:
                 gen_employee_listing("8. Print Employee Listing")
             if choice == 9:
