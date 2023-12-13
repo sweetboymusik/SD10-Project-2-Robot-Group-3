@@ -256,118 +256,126 @@ def gen_employee_listing(name):
 
 
 def gen_driver_fin_listing(name):
-    clear_console()
-    print(name)
-    print()
-
-    emp_arr = []
-
-    f = open("Employees.dat", "r")
-    for line in f:
-        line_split = line.split(", ")
-        emp_arr.append(line_split[2].strip())
-    f.close()
-
     while True:
+        clear_console()
+        print(name)
         print()
-        driver_num = input("Enter driver number (####): ")
 
-        if len(driver_num) != 4:
+        emp_arr = []
+
+        f = open("Employees.dat", "r")
+        for line in f:
+            line_split = line.split(", ")
+            emp_arr.append(line_split[2].strip())
+        f.close()
+
+        while True:
             print()
-            print("MUST BE A VALID 4-DIGIT NUMBER. PLEASE RE-ENTER.")
-            print()
-        elif driver_num not in emp_arr:
-            print()
-            print("NOT A VALID DRIVER NUMBER. PLEASE RE-ENTER.")
-            print()
-        else:
-            print(driver_num)
+            driver_num = input("Enter driver number (####): ")
+
+            if len(driver_num) != 4:
+                print()
+                print("MUST BE A VALID 4-DIGIT NUMBER. PLEASE RE-ENTER.")
+                print()
+            elif driver_num not in emp_arr:
+                print()
+                print("NOT A VALID DRIVER NUMBER. PLEASE RE-ENTER.")
+                print()
+            else:
+                print(driver_num)
+                break
+
+        while True:
+            try:
+                print()
+                start_date = input(
+                    "Enter start date (YYYY-MM-DD): ")
+                datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            except:
+                print()
+                print(
+                    "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+            else:
+                if datetime.datetime.strptime(start_date, "%Y-%m-%d").date() <= datetime.datetime.now().date():
+                    break
+                else:
+                    print()
+                    print(
+                        "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+
+        while True:
+            try:
+                print()
+                end_date = input(
+                    "Enter end date (YYYY-MM-DD): ")
+                datetime.datetime.strptime(end_date, "%Y-%m-%d")
+            except:
+                print()
+                print(
+                    "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+            else:
+                if (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date()) and (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() <= datetime.datetime.now().date()):
+                    break
+                else:
+                    print()
+                    print(
+                        "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR EARLIER THAN START DATE, OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+
+        clear_console()
+
+        print()
+        print()
+        print("HAB TAXI SERVICES")
+        print("DRIVER FINANCIAL LISTING")
+        print()
+        print(f"DRIVER NUMBER: {driver_num}")
+        print(f"START DATE:    {start_date}")
+        print(f"END DATE:      {end_date}")
+        print()
+        print("=" * 65)
+        print()
+        print(" ID        DATE         DESC.       AMOUNT       HST       TOTAL")
+        print("-" * 65)
+
+        f = open("Revenues.dat", "r")
+        trans_cnt = 0
+        amt_acm = 0
+        tax_acm = 0
+        total_acm = 0
+
+        for line in f:
+            line_split = line.split(", ")
+
+            if line_split[1].strip() != driver_num:
+                continue
+
+            trans_id = line_split[0].strip()
+            trans_date = line_split[2].strip()
+            desc = line_split[3].strip()
+            amount = float(line_split[4].strip())
+            taxes = float(line_split[5].strip())
+            total = float(line_split[6].strip())
+
+            if datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date() and datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() <= datetime.datetime.strptime(end_date, "%Y-%m-%d").date():
+                print(
+                    f" {trans_id:3s}    {trans_date:10s}   {desc:13s}{format_dollars(amount)}  {format_dollars(taxes)}  {format_dollars(total)}")
+
+                trans_cnt += 1
+                amt_acm += amount
+                tax_acm += taxes
+                total_acm += total
+
+        print(" " * 34 + "-" * 31)
+        print(
+            f"TOTAL TRANSACTIONS: {trans_cnt:03d}   TOTALS: {format_dollars(amt_acm)}  {format_dollars(tax_acm)}  {format_dollars(total_acm)}")
+        print(" " * 34 + "=" * 31)
+
+        another = input("Generate another report? (Y/N): ").upper()
+        clear_console()
+
+        if another == "N":
+            clear_console()
             break
-
-    while True:
-        try:
-            print()
-            start_date = input(
-                "Enter start date (YYYY-MM-DD): ")
-            datetime.datetime.strptime(start_date, "%Y-%m-%d")
-        except:
-            print()
-            print(
-                "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
-        else:
-            if datetime.datetime.strptime(start_date, "%Y-%m-%d").date() <= datetime.datetime.now().date():
-                break
-            else:
-                print()
-                print(
-                    "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
-
-    while True:
-        try:
-            print()
-            end_date = input(
-                "Enter end date (YYYY-MM-DD): ")
-            datetime.datetime.strptime(end_date, "%Y-%m-%d")
-        except:
-            print()
-            print(
-                "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
-        else:
-            if (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date()) and (datetime.datetime.strptime(end_date, "%Y-%m-%d").date() <= datetime.datetime.now().date()):
-                break
-            else:
-                print()
-                print(
-                    "INVALID INPUT. CANNOT BE LATER THAN TODAY'S DATE OR EARLIER THAN START DATE, OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
-
-    print()
-    print()
-    print("HAB TAXI SERVICES")
-    print("DRIVER FINANCIAL LISTING")
-    print()
-    print(f"DRIVER NUMBER: {driver_num}")
-    print(f"START DATE:    {start_date}")
-    print(f"END DATE:      {end_date}")
-    print()
-    print("=" * 65)
-    print()
-    print(" ID        DATE         DESC.       AMOUNT       HST       TOTAL")
-    print("-" * 65)
-
-    f = open("Revenues.dat", "r")
-    trans_cnt = 0
-    amt_acm = 0
-    tax_acm = 0
-    total_acm = 0
-
-    for line in f:
-        line_split = line.split(", ")
-
-        if line_split[1].strip() != driver_num:
-            continue
-
-        trans_id = line_split[0].strip()
-        trans_date = line_split[2].strip()
-        desc = line_split[3].strip()
-        amount = float(line_split[4].strip())
-        taxes = float(line_split[5].strip())
-        total = float(line_split[6].strip())
-
-        if datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() >= datetime.datetime.strptime(start_date, "%Y-%m-%d").date() and datetime.datetime.strptime(trans_date, "%Y-%m-%d").date() <= datetime.datetime.strptime(end_date, "%Y-%m-%d").date():
-            print(
-                f" {trans_id:3s}    {trans_date:10s}   {desc:13s}{format_dollars(amount)}  {format_dollars(taxes)}  {format_dollars(total)}")
-
-            trans_cnt += 1
-            amt_acm += amount
-            tax_acm += taxes
-            total_acm += total
-
-    print(" " * 34 + "-" * 31)
-    print(
-        f"TOTAL TRANSACTIONS: {trans_cnt:03d}   TOTALS: {format_dollars(amt_acm)}  {format_dollars(tax_acm)}  {format_dollars(total_acm)}")
-    print(" " * 34 + "=" * 31)
-
-    input("...")
 
 
 def add_revenue(emp, amt):
