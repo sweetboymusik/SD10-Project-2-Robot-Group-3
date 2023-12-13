@@ -1,5 +1,6 @@
 # Creating a company services system
-# Date Written: Dec 12th, 2023 - End date: Dec , 2023
+# For HAB Taxi Services
+# Dates Written: Dec 12th, 2023 - Dec 13, 2023
 # Authors: Benjamin Follett, Elliott Butt, Joseph Flores, Alexander Condon-Escott, Francisco Castillo, Zachary Hulan
 
 # Import any required libraries
@@ -14,6 +15,7 @@ MONTHLY_STAND_FEE = float(f.readline().strip())
 DAILY_RENTAL_FEE = float(f.readline().strip())
 WEEKLY_RENTAL_FEE = float(f.readline().strip())
 HST_RATE = float(f.readline().strip())
+TODAY = datetime.datetime.today()
 f.close()
 
 
@@ -28,7 +30,8 @@ def add_employee(name):
 
         while True:
             print()
-            first_name = input("First name:                     ").title()
+            first_name = input(
+                "First name: ").title()
             first_name_strip = first_name.strip()
             if first_name_strip.replace(" ", "").isalpha() and str(first_name) != '':
                 break
@@ -38,7 +41,7 @@ def add_employee(name):
 
         while True:
             print()
-            last_name = input("Last name:                     ").title()
+            last_name = input("Last name: ").title()
             last_name_strip = last_name.strip()
             if last_name_strip.replace(" ", "").isalpha() and str(last_name) != '':
                 break
@@ -48,7 +51,7 @@ def add_employee(name):
 
         while True:
             print()
-            street_address = input("Street Address:                 ").title()
+            street_address = input("Street Address: ").title()
             if str(street_address) != '':
                 break
             else:
@@ -57,7 +60,7 @@ def add_employee(name):
 
         while True:
             print()
-            city_address = input("City:                           ").title()
+            city_address = input("City: ").title()
             if str(city_address) != '':
                 break
             else:
@@ -68,7 +71,7 @@ def add_employee(name):
                    "MB", "SK", "AB", "BC", "YT", "NT", "NV"]
         while True:
             print()
-            province = input("Province (XX):                  ").upper()
+            province = input("Province (XX): ").upper()
             print()
             if province == "":
                 print("PROVINCE CANNOT BE BLANK. PLEASE TRY AGAIN.")
@@ -80,7 +83,7 @@ def add_employee(name):
                 break
 
         while True:
-            postal_code = input("Postal code (A1A1A1):           ").upper()
+            postal_code = input("Postal code (A1A1A1): ").upper()
             if len(postal_code) != 6:
                 print()
                 print("POSTAL CODE IS INVALID OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
@@ -109,7 +112,7 @@ def add_employee(name):
         while True:
             print()
             drivers_license = input(
-                "Driver's License Number:                   ").upper()
+                "Driver's License Number: ").upper()
             if str(drivers_license) != '':
                 break
             else:
@@ -120,18 +123,24 @@ def add_employee(name):
             print()
             try:
                 license_expiry = input(
-                    "License expiry date (YYYY-MM-DD):           ")
+                    "License expiry date (YYYY-MM-DD): ")
                 datetime.datetime.strptime(license_expiry, "%Y-%m-%d")
             except:
                 print()
-                print("INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+                print(
+                    "INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
             else:
-                break
+                if datetime.datetime.strptime(license_expiry, "%Y-%m-%d").date() >= datetime.datetime.now().date():
+                    break
+                else:
+                    print()
+                    print(
+                        "INVALID INPUT. CANNOT BE EARLIER THAN TODAY'S DATE OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
 
         while True:
             print()
             policy_company = input(
-                "Insurance policy company:                   ").title()
+                "Insurance policy company: ").title()
             if str(policy_company) != '':
                 break
             else:
@@ -141,7 +150,7 @@ def add_employee(name):
         while True:
             print()
             policy_number = input(
-                "Insurance policy number:                   ").upper()
+                "Insurance policy number: ").upper()
             if str(policy_number) != '':
                 break
             else:
@@ -151,7 +160,7 @@ def add_employee(name):
         while True:
             print()
             own_car = input(
-                "Do you own a car (Y/N):                   ").upper()
+                "Do you own a car (Y/N): ").upper()
             if own_car == 'Y' or own_car == 'N':
                 break
             else:
@@ -160,6 +169,9 @@ def add_employee(name):
 
         balance_due = 0
 
+        print()
+        print("Details Entered:")
+        print("----------------")
         print(f"Name: {first_name} {last_name}")
         print(f"Driver Number: {driver_number}")
         print(
@@ -171,6 +183,7 @@ def add_employee(name):
         print(f"Policy Number: {policy_number}")
         print(f"Car Type: {own_car}")
         print(f"Balance Due: {balance_due}")
+        print()
 
         f = open("Employees.dat", "a")
         f.write(f"{first_name}, {last_name}, ")
@@ -186,14 +199,14 @@ def add_employee(name):
         f.close()
 
         another = input("Enter another employee? (Y/N): ").upper()
-        clear_console
+        clear_console()
 
         if another == "N":
-            clear_console
+            clear_console()
             break
 
 
-def gen_report(name):
+def gen_employee_listing(name):
     clear_console()
 
     print(name)
@@ -243,6 +256,26 @@ def gen_report(name):
     clear_console()
 
 
+def add_revenue(emp, amt):
+    global NEXT_TRANS_NUM
+
+    entry_arr = []
+
+    f = open("Revenue.dat", "a")
+
+    entry_arr.append(f"{NEXT_TRANS_NUM}")
+    entry_arr.append(emp[2])
+    entry_arr.append(f"{TODAY.date()}")
+    entry_arr.append("Standing Fees")
+    entry_arr.append(f"{amt}")
+    entry_arr.append(f"{amt * HST_RATE}")
+    entry_arr.append(f"{amt + (amt * HST_RATE)}")
+
+    f.write(f"{', '.join(entry_arr)}\n")
+
+    NEXT_TRANS_NUM += 1
+
+
 def todo(name):
     clear_console()
     print(name)
@@ -258,12 +291,46 @@ def clear_console():
         os.system("clear")
 
 
-# Start of the main program.
+def update_bal_revenue():
+    emp_arr = []
+
+    if TODAY.day == 1:
+        f = open("Employees.dat", "r")
+
+        for line in f:
+            line_split = line.split(", ")
+
+            if line_split[len(line_split) - 2] == "N":
+                line_split[len(line_split) -
+                           1] = line_split[len(line_split) - 1].strip()
+                emp_arr.append(line_split)
+                continue
+
+            bal_due = float(line_split[len(line_split) - 1].strip())
+            bal_due += MONTHLY_STAND_FEE
+
+            line_split[len(line_split) - 1] = f"{bal_due}"
+            emp_arr.append(line_split)
+
+            add_revenue(line_split, bal_due)
+
+        f.close()
+
+        f = open("Employees.dat", "w")
+        for line in emp_arr:
+            f.write(f"{', '.join(line)}\n")
+        f.close()
+
+
+# 'automatically' update balance due and revenue table on first of month (see function)
+update_bal_revenue()
+
+# Start of the main program
 while True:
     clear_console()
 
-    print(f"HAB Taxi Services")
-    print(f"Company Services System")
+    print(f"         HAB Taxi Services")
+    print(f"         Company Services System")
     print()
     print(f"1. Enter New Employee (driver).")
     print(f"2. Enter Company Revenues.")
@@ -277,7 +344,7 @@ while True:
     print()
 
     try:
-        choice = int(input("Enter choice (1-9): "))
+        choice = int(input("         Enter choice (1-9): "))
     except:
         print("Invalid selection - must choose an option between 1-9. Please re-enter.")
     else:
@@ -298,9 +365,11 @@ while True:
             if choice == 7:
                 todo("7. Print Driver Financial Listing")
             if choice == 8:
-                gen_report("8. Print Employee Listing")
+                gen_employee_listing("8. Print Employee Listing")
             if choice == 9:
+                clear_console()
                 print("Thank you for using our program. Have a great day!")
+                print()
                 break
         else:
             print(
