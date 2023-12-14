@@ -198,13 +198,16 @@ def add_employee(name):
         f.write(f"{balance_due}\n")
         f.close()
 
-        another = input("Enter another employee? (Y/N): ").upper()
-        clear_console()
-
-        if another == "N":
-            clear_console()
-            break
-
+        while True:
+            print()
+            another = input("Enter another employee? (Y/N): ").upper()
+            if another == 'Y':
+                break  
+            elif another == 'N':
+                return
+            else:
+                print()
+                print("INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
 
 def gen_employee_listing(name):
     clear_console()
