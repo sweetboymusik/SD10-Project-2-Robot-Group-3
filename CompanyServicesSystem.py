@@ -202,12 +202,13 @@ def add_employee(name):
             print()
             another = input("Enter another employee? (Y/N): ").upper()
             if another == 'Y':
-                break  
+                break
             elif another == 'N':
                 return
             else:
                 print()
                 print("INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
+
 
 def gen_employee_listing(name):
     clear_console()
@@ -285,7 +286,6 @@ def gen_driver_fin_listing(name):
                 print("NOT A VALID DRIVER NUMBER. PLEASE RE-ENTER.")
                 print()
             else:
-                print(driver_num)
                 break
 
         while True:
@@ -373,12 +373,16 @@ def gen_driver_fin_listing(name):
             f"TOTAL TRANSACTIONS: {trans_cnt:03d}   TOTALS: {format_dollars(amt_acm)}  {format_dollars(tax_acm)}  {format_dollars(total_acm)}")
         print(" " * 34 + "=" * 31)
 
-        another = input("Generate another report? (Y/N): ").upper()
-        clear_console()
-
-        if another == "N":
-            clear_console()
-            break
+        while True:
+            print()
+            another = input("Generate another report? (Y/N): ").upper()
+            if another == 'Y':
+                break
+            elif another == 'N':
+                return
+            else:
+                print()
+                print("INVALID INPUT OR CANNOT BE BLANK. PLEASE TRY AGAIN.")
 
 
 def add_revenue(emp, amt):
