@@ -1,0 +1,4 @@
+- Handle invalid input in main menu
+- Added a few balance dues to some employees in the employees table (based on entries in the revenues table)
+- Added continue validation in option 7 (like Joseph did for option 1)
+- Cleaned up the display formatting for option 7

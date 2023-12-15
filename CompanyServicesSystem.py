@@ -182,7 +182,7 @@ def add_employee(name):
         print(f"Policy Company: {policy_company}")
         print(f"Policy Number: {policy_number}")
         print(f"Car Type: {own_car}")
-        print(f"Balance Due: {balance_due}")
+        print(f"Balance Due: ${balance_due:,.2f}")
         print()
 
         f = open("Employees.dat", "a")
@@ -326,7 +326,7 @@ def gen_driver_fin_listing(name):
 
         clear_console()
 
-        print()
+        print(name)
         print()
         print("HAB TAXI SERVICES")
         print("DRIVER FINANCIAL LISTING")
@@ -482,7 +482,8 @@ while True:
     try:
         choice = int(input("         Enter choice (1-9): "))
     except:
-        print("Invalid selection - must choose an option between 1-9. Please re-enter.")
+        print()
+        input("Invalid selection - must choose an option between 1-9. Press enter to continue...")
     else:
         if choice <= 9 and choice >= 1:
             if choice == 1:
@@ -508,8 +509,9 @@ while True:
                 print()
                 break
         else:
-            print(
-                "Invalid selection - must choose an option between 1-9. Please re-enter.")
+            print()
+            input(
+                "Invalid selection - must choose an option between 1-9. Press enter to continue...")
 
 # Write constants back to defaults file
 f = open("Defaults.dat", "w")
