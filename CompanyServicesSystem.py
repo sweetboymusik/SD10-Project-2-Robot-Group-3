@@ -274,7 +274,6 @@ def gen_driver_fin_listing(name):
         f.close()
 
         while True:
-            print()
             driver_num = input("Enter driver number (####): ")
 
             if len(driver_num) != 4:
